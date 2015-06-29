@@ -139,8 +139,13 @@ Assets::start_js();
 
                     if ( result && result.status == 'ok' )
                     {
-                        var tr = '<tr><td>'+ baslik +'</td><td>'+ deger +'</td><td><a href="#" class="btn btn-sm btn-danger"><i class="fa fa-trash-o"></i></td></tr>';
-                        $('.bilgiler').appendTo(tr);
+                        var bilgi_id = result.id;
+                        var table_tr = $('.bilgiler').html();
+                        var tr = '<tr><td>'+ baslik +'</td><td>'+ deger +'</td>';
+                            tr += '<td><a href="#" title="'+ bilgi_id +'" class="btn btn-sm btn-danger delete_bilgi">';
+                            tr += '<i class="fa fa-trash-o"></i></td></tr>';
+
+                        $('.bilgiler').html( table_tr + tr);
                     }
                     else
                     {
@@ -151,9 +156,26 @@ Assets::start_js();
 
         });
 
+        //bilgi silme
+        $(document).on('click', '.delete_bilgi', function(e){
 
+            e.preventDefault();
 
+            var tr = $(this).parent().parent();
+            var bilgi_id = $(this).attr('title');
 
+            $.post('/admin/kisiler/ajax_bilgi_sil', { 'bilgi_id' : bilgi_id }, function(result){
+
+                if ( result && result.status == 'ok') 
+                {
+                    tr.remove();
+                }
+                else
+                {
+                    alert(result.message);
+                }
+            });
+        });
 
     });
 </script>
