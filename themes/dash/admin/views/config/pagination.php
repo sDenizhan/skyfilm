@@ -1,0 +1,20 @@
+<?php
+$pagination['full_tag_open'] = '<ul class="pagination">';
+$pagination['full_tag_close'] = '</ul></div>';
+$pagination['first_link'] = 'İlk Sayfa';
+$pagination['first_tag_open'] = '<li>';
+$pagination['first_tag_close'] = '</li>';
+$pagination['num_tag_open'] = '<li>';
+$pagination['num_tag_close'] = '</li>';
+$pagination['last_link'] = 'Son Sayfa';
+$pagination['last_tag_open'] = '<li>';
+$pagination['last_tag_close'] = '</li>';
+$pagination['cur_tag_open'] = '<li class="active"><a href="#">';
+$pagination['cur_tag_close'] = '</a></li>';
+$pagination['prev_link'] = '<';
+$pagination['prev_tag_open'] = '<li>';
+$pagination['prev_tag_close'] = '</li>';
+$pagination['next_link'] = '>';
+$pagination['next_tag_open'] = '<li>';
+$pagination['next_tag_close'] = '</li>';
+$pagination['anchor_class'] = '';
