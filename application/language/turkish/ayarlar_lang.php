@@ -1,0 +1,28 @@
+<?php
+$lang['ayarlar_proje'] = array(
+    'baslik' => 'Proje Ayarları',
+    'proje_genel_ayarlari' => 'Proje Genel Ayarlar',
+    'proje_cevirmen_ayarlari' => 'Proje Çevirmen Ayarları',
+    'proje_inhouse_ayarlari' => 'Proje InHouse Ayarları',
+    'menu_anasayfa' => 'Anasayfa',
+    'menu_ayarlar' => 'Ayarlar',
+    'menu_proje_ayarlar' => 'Proje Ayarları',
+    'label_proje_adi' => 'Proje Adı : ',
+    'label_sunucu_ip' => 'Sunucu IP : ',
+    'label_sunucu_disk' => 'Sunucu Disk : ',
+    'label_proje_dili' => 'Proje Dili : ',
+    'label_nomatch' => 'Nomatch :',
+    'label_elli' => '50 :',
+    'label_yetmisbes' => '75 :',
+    'label_seksenbes' => '85 :',
+    'label_doksanbes' => '95 :',
+    'label_yuz' => '100 :',
+    'label_rep' => 'Rep :',
+    'label_tm' => 'TM :',
+    'label_saat' => 'Saat :',
+    'button_kaydet' => 'Ayarları Kaydet',
+    'islem_basarisiz' => 'Hata',
+    'islem_basarili' => 'Tamam',
+    'ayarlar_guncellendi' => 'Ayarlar Güncellendi..!',
+    'ayarlar_guncellenemedi' => 'Ayarlar Yazılamadı..!'
+);
