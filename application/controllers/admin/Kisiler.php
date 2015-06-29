@@ -226,7 +226,9 @@ class Kisiler extends AdminController {
 
             if ( $insert )
             {
-                $data = json_encode( array('status' => 'ok', 'message' => 'Başlık Eklendi..!') );
+            	$bilgi_id = $this->db->insert_id();
+
+                $data = json_encode( array('status' => 'ok', 'message' => 'Başlık Eklendi..!', 'id' => $bilgi_id) );
             }
             else
             {
@@ -273,6 +275,41 @@ class Kisiler extends AdminController {
                     $data = array('status' => 'error', 'message' => 'Kişi Kaydedilemedi.. Lütfen Tekrar Deneyiniz..!');
                 }
 
+            }
+        }
+
+        $this->output->set_content_type('application/json')->set_output(json_encode($data));
+    }
+
+    public function ajax_bilgi_sil()
+    {
+        $bilgi_id = $this->input->post('bilgi_id');
+
+        if ( empty($bilgi_id) )
+        {
+            $data = array('status' => 'error', 'message' => 'Bilgi ID\'ye Erişelemedi..!');
+        }
+        else
+        {
+            $kisi = $this->db->get_where('kisi_bilgileri', array('id' => $bilgi_id));
+
+            if ( $kisi->num_rows() > 0 )
+            {
+            	$delete = $this->db->delete('kisi_bilgileri', array('id' => $bilgi_id));
+
+            	if ( $delete )
+            	{
+            		$data = array('status' => 'ok', 'message' => 'Kişi Bilgisi Silindi..!');
+            	}
+            	else
+            	{
+            		$data = array('status' => 'error', 'message' => 'Kişi Bilgisi Silinemedi..!');
+            	}
+                
+            }
+            else
+            {
+                $data = array('status' => 'error', 'message' => 'Kişi Bilgisine Erişelemedi..!');
             }
         }
 
