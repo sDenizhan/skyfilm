@@ -105,8 +105,9 @@ Assets::start_js();
         $('input#kisi_adi').on('blur', function(){
 
             var kisi_adi = $(this).val();
+            var kisi_id = $('#kisi_id').val();
 
-            if ( kisi_adi != '' )
+            if ( kisi_adi != '' && kisi_id == '')
             {
                 $.post('/admin/kisiler/ajax_kisi_kaydet', {'kisi_adi' : kisi_adi }, function (response) {
 
@@ -190,13 +191,19 @@ Assets::start_js();
             var kisi_id = $('#kisi_id').val();
             var resim = $('#kisi_resmi').val();
             var meslek = $('#tur').val();
+            var seo_title = $('#seo_title').val();
+            var seo_desc = $('#seo_description').val();
+            var seo_keys = $('#seo_keywords').val();
 
             $.post(
                 '/admin/kisiler/ajax_kisi_guncelle', 
                 {
                     'kisi_id' : kisi_id,
                     'resim_adresi' : resim,
-                    'meslek' : meslek
+                    'meslek' : meslek,
+                    'seo_title': seo_title,
+                    'seo_keys' : seo_keys,
+                    'seo_desc' : seo_desc
                 },
                 function(result)
                 {

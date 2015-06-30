@@ -48,70 +48,17 @@ class Kisiler extends AdminController {
         $this->render('kisiler_ekle');
 	}
 	
-	public function kaydet(){
-		$this->form_validation->set_rules('frmKategoriAdi','Kategori Adı','trim|required|xss_clean');
+	public function sil(){
+		$kisi_id = $this->uri->segment(4);
 		
-		$this->form_validation->set_message('required', '%s alanını boş bırakamazsınız');
-		
-		if ($this->form_validation->run() !== FALSE) {
-			
-			$_kategoriAdi = $this->input->post('frmKategoriAdi', TRUE);
-			$_kategoriValue = $this->input->post('frmUstKategori', TRUE);
-            $_seoTitle = $this->input->post('seotitle', TRUE);
-			$_seoKeys = $this->input->post('seokeys', TRUE);
-            $_seoDesc = $this->input->post('seodesc', TRUE);
-
-            if ($_kategoriValue == 0)
-            {
-                $_UstKategoriID = 0;
-                $_UstKategoriAdi = $_kategoriAdi;
-            }
-            else
-            {
-                $_parcala = explode("|", $_kategoriValue);
-                $_UstKategoriID = $_parcala[0];
-                $_UstKategoriAdi = $_parcala[1];
-            }
-
-			$_kaydet = $this->db->insert('kisiler',
-                    array(
-                        "kategori_adi" => $_kategoriAdi,
-                        "parent_id" => $_UstKategoriID,
-                        "parent_adi" => $_UstKategoriAdi,
-                        'seo_title' => $_seoTitle,
-                        'seo_keys' => $_seoKeys,
-                        'seo_desc' => $_seoDesc,
-                        'uri' => seoURL($_kategoriAdi)
-                    ));
-
-			if ($_kaydet) {
-				$_data['e'] = (object) array('durum' => 'ok', 'type' => 'normal', 'mesaj' => 'Kategori Eklendi.. <b><a href="'.base_url("admin/kisiler").'"> Geri Dön </a></b>');
-				$this->render('errorpage', $_data);	
-			} else {
-				$_data['e'] = (object) array('durum' => 'hata', 'type' => 'normal', 'mesaj' => 'Kategori Eklenemedi. <b><a href="'.base_url("admin/kisiler/kategoriekle").'"> Geri Dön </a></b>');
-				$this->render('errorpage', $_data);	
-			}
-			
-		} else {
-			$_data['e'] = (object) array('durum' => 'hata', 'type' => 'formvalidation', 'mesaj' => '<b><a href="'.base_url("admin/kisiler").'"> Geri Dön </a></b>');
-			$this->render('errorpage', $_data);	
-		}
-		
-	}
-	
-	
-	public function kategorisil(){
-		$_KategoriID = $this->uri->segment(4);
-		
-		if (!is_numeric($_KategoriID) || empty($_KategoriID) ):
+		if (!is_numeric($kisi_id) || empty($kisi_id) ):
 			redirect("admin/panel");
 		else:
-			$kategori = $this->db->get_where('kisiler', array('id' => $_KategoriID));
+			$kisi = $this->db->get_where('kisiler', array('id' => $kisi_id));
 			
-			if ($kategori->num_rows() > 0): 
-				
-			
-				$_delete = $this->db->delete('kisiler', array("id" => $_KategoriID));
+			if ($kisi->num_rows() > 0):
+
+				$_delete = $this->db->delete('kisiler', array("id" => $kisi_id));
 				
 				if ($_delete > 0) :
 					$_data['e'] = (object) array('durum' => 'ok', 'type' => 'normal', 'mesaj' => 'Kayıt Silindi. <a href="' .base_url("admin/kisiler"). '"> Geri Dön </a>');
@@ -127,83 +74,28 @@ class Kisiler extends AdminController {
 		endif;
 	}
 	
-	public function kategoriduzelt(){
-		$_KategoriID = $this->uri->segment(4);
+	public function duzelt(){
+		$kisi_id = $this->uri->segment(4);
 		
-		if (!is_numeric($_KategoriID) || empty($_KategoriID) ):
+		if (!is_numeric($kisi_id) || empty($kisi_id) ):
 			redirect("admin/panel");
 		else:
-			$_kategori = $this->db->get_where('kisiler', array('id' => $_KategoriID));
-			if ($_kategori != FALSE):
-				$_ustkat = $this->db->query("SELECT * FROM kisiler WHERE parent_id = 0");
-				$_altkat = $this->db->query("SELECT * FROM kisiler WHERE parent_id != 0");
-				$_data["_ustkat"] = $_ustkat;
-				$_data["_altkat"] = $_altkat;
-				$_data['_kategori'] = $_kategori;
-				$this->render('kategoriler_duzelt', $_data);
-			
+			$_kisi = $this->db->get_where('kisiler', array('id' => $kisi_id));
+			if ($_kisi != FALSE):
+
+                //kişiye ait bilgileri de gönderelim
+                $bilgiler = $this->db->get_where('kisi_bilgileri', array('kisi_id' => $kisi_id));
+                $_data['_bilgiler'] = ( $bilgiler->num_rows() > 0 ) ? $bilgiler->result() : false;
+
+                $_data['_kisi'] = $_kisi->row();
+                $this->render('kisiler_duzelt', $_data);
+
 			else:
 				$_data['e'] = (object) array('durum' => 'hata', 'type' => 'normal', 'mesaj' => 'Kayıt Bulunamadı. <a href="' .base_url("admin/kisiler"). '"> Geri Dön </a>');
 				$this->render('errorpage', $_data);
 			endif;
 		endif;
 		
-	}
-	
-	
-	public function kategoriduzeltkaydet(){
-		$_KategoriID = $this->uri->segment(4);
-		
-		if (!is_numeric($_KategoriID) || empty($_KategoriID) ):
-			redirect("admin/panel");
-		else:
-			$_kategori = $this->db->get_where('kisiler', array('id' => $_KategoriID));
-			if ($_kategori != FALSE):
-		
-				$this->form_validation->set_rules('frmKategoriAdi','Kategori Adı','trim|required|xss_clean');
-				$this->form_validation->set_message('required', '%s alanını boş bırakamazsınız');
-			
-				if ($this->form_validation->run() !== FALSE) {
-						
-					$_kategoriAdi = $this->input->post('frmKategoriAdi', TRUE);
-					$_kategoriValue = $this->input->post('frmUstKategori', TRUE);
-					$_seoTitle = $this->input->post('seotitle', TRUE);
-					$_seoKeys = $this->input->post('seokeys', TRUE);
-		            $_seoDesc = $this->input->post('seodesc', TRUE);
-						
-					$_parcala = explode("|", $_kategoriValue);
-					$_UstKategoriID = $_parcala[0];
-					$_UstKategoriAdi = $_parcala[1];
-						
-					$_kaydet = $this->db->update('kisiler',
-                        array(
-                            "kategori_adi" => $_kategoriAdi,
-                            "parent_id" => $_UstKategoriID,
-                            "parent_adi" => $_UstKategoriAdi,
-                            'seo_title' => $_seoTitle,
-                            'seo_keys' => $_seoKeys,
-                            'seo_desc' => $_seoDesc
-                        ), array('id' => $_KategoriID));
-			
-					if ($_kaydet) {
-						$_data['e'] = (object) array('durum' => 'ok', 'type' => 'normal', 'mesaj' => 'Kategori Düzeltildi..! <b><a href="'.base_url("admin/kisiler").'"> Geri Dön </a></b>');
-						$this->render('errorpage', $_data);
-					} else {
-						$_data['e'] = (object) array('durum' => 'hata', 'type' => 'normal', 'mesaj' => 'Kategori Düzeltilemedi..! <b><a href="'.base_url("admin/kisiler").'"> Geri Dön </a></b>');
-						$this->render('errorpage', $_data);
-					}
-						
-				} else {
-					$_data['e'] = (object) array('durum' => 'hata', 'type' => 'formvalidation', 'mesaj' => 'Kayıt Bulunamadı. <b><a href="'.base_url("admin/kisiler").'"> Geri Dön </a></b>');
-					$this->render('errorpage', $_data);
-				}
-		
-			else:
-				$_data['e'] = (object) array('durum' => 'hata', 'type' => 'normal', 'mesaj' => 'Kayıt Bulunamadı. <a href="' .base_url("AdminKategoriler"). '"> Geri Dön </a>');
-				$this->render('errorpage', $_data);
-			endif;
-		endif;
-	
 	}
 
     public function ajax_bilgi_kaydet()
@@ -324,13 +216,19 @@ class Kisiler extends AdminController {
 
         if ( $this->form_validation->run() != false ):
 
-            $kisi_id = $this->input->post('kisi_id');
-            $resim = $this->input->post('resim_adresi');
-            $meslek = $this->input->post('meslek');
+            $kisi_id = $this->input->post('kisi_id', true);
+            $resim = $this->input->post('resim_adresi', true);
+            $meslek = $this->input->post('meslek', true);
+            $seo_title = $this->input->post('seo_title', true);
+            $seo_keys = $this->input->post('seo_keys', true);
+            $seo_desc = $this->input->post('seo_desc', true);
 
             $update = $this->db->update('kisiler', array(
                 'resim' => $resim,
-                'tur' => $meslek
+                'tur' => $meslek,
+                'seo_title' => $seo_title,
+                'seo_keys' => $seo_keys,
+                'seo_desc' => $seo_desc
             ), array('id' => $kisi_id));
 
             if ( $update )
