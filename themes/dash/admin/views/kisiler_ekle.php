@@ -1,6 +1,10 @@
-<form class="form-horizontal" method="post" action="<?php echo base_url('admin/filmler/kaydet'); ?>" role="form">
+<form class="form-horizontal" method="post" action="<?php echo base_url('admin/kisiler/kaydet'); ?>" role="form" id="oyuncu_form">
     <div class="row">
         <div class="col-sm-12 col-md-9 col-lg-9">
+
+            <div id="result" class="alert hide">
+            </div>
+
             <div class="block-flat">
                 <div class="header">
                     <h3>Kişi Ekle</h3>
@@ -76,6 +80,7 @@
                     <img src="" width="150" height="250" id="skyfile_img" border="0" style="display: none" /> <br><br>
                     <input type="hidden" class="form-control" name="kisi_resmi" id="kisi_resmi" >
                     <a href="#" class="btn btn-primary" onclick="SkyFileManager(this, 'kisi_resmi');">Resim Ekle</a>
+                    <button type="submit" class="btn btn-success">Güncelle</button>
                 </div>
             </div>
 
@@ -175,6 +180,37 @@ Assets::start_js();
                     alert(result.message);
                 }
             });
+        });
+
+        //oyuncu bilgilerini güncelleme
+        $(document).on('submit', 'form#oyuncu_form', function(e){
+
+            e.preventDefault();
+
+            var kisi_id = $('#kisi_id').val();
+            var resim = $('#kisi_resmi').val();
+            var meslek = $('#tur').val();
+
+            $.post(
+                '/admin/kisiler/ajax_kisi_guncelle', 
+                {
+                    'kisi_id' : kisi_id,
+                    'resim_adresi' : resim,
+                    'meslek' : meslek
+                },
+                function(result)
+                {
+                    if ( result && result.status == 'ok')
+                    {
+                        $('#result').removeClass('hide').removeClass('alert-danger').addClass('alert-success').html(result.message);
+                    }
+                    else
+                    {
+                        $('#result').removeClass('hide').removeClass('alert-success').addClass('alert-danger').html(result.message);
+                    }
+                }
+            );
+
         });
 
     });

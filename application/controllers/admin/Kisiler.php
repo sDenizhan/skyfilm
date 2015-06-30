@@ -27,13 +27,13 @@ class Kisiler extends AdminController {
 
 			include VIEWPATH.'dash/'. $this->getTheme() .'/views/config/pagination.php';
 		
-			$this->db->order_by('kategori_adi', 'ASC');
-			$_cats = $this->db->get('kisiler', $config['per_page'], $_page);
+			$this->db->order_by('adi_soyadi', 'ASC');
+			$_kisiler = $this->db->get('kisiler', $config['per_page'], $_page);
 
 			$this->pagination->initialize($config);
 
 			$_data['_pages'] = $this->pagination->create_links();
-			$_data['_cats'] = $_cats;
+			$_data['_kisiler'] = $_kisiler->result();
 			
 			$this->render('kisiler_index', $_data);
 			
@@ -209,8 +209,8 @@ class Kisiler extends AdminController {
     public function ajax_bilgi_kaydet()
     {
         $this->form_validation->set_rules('kisi_id', 'Kişi ID', 'required|trim|xss_clean');
-        $this->form_validation->set_rules('kisi_id', 'Kişi ID', 'required|trim|xss_clean');
-        $this->form_validation->set_rules('kisi_id', 'Kişi ID', 'required|trim|xss_clean');
+        $this->form_validation->set_rules('baslik', 'Başlık', 'required|trim|xss_clean');
+        $this->form_validation->set_rules('deger', 'Değer', 'required|trim|xss_clean');
 
         if ( $this->form_validation->run() != false ):
 
@@ -314,6 +314,39 @@ class Kisiler extends AdminController {
         }
 
         $this->output->set_content_type('application/json')->set_output(json_encode($data));
+    }
+
+    public function ajax_kisi_guncelle()
+    {
+        $this->form_validation->set_rules('kisi_id', 'Kişi ID', 'required|trim|xss_clean');
+        $this->form_validation->set_rules('resim_adresi', 'Resim', 'required|trim|xss_clean');
+        $this->form_validation->set_rules('meslek', 'Meslek', 'required|trim|xss_clean');
+
+        if ( $this->form_validation->run() != false ):
+
+            $kisi_id = $this->input->post('kisi_id');
+            $resim = $this->input->post('resim_adresi');
+            $meslek = $this->input->post('meslek');
+
+            $update = $this->db->update('kisiler', array(
+                'resim' => $resim,
+                'tur' => $meslek
+            ), array('id' => $kisi_id));
+
+            if ( $update )
+            {
+                $data = json_encode( array('status' => 'ok', 'message' => 'Oyuncu Bilgileri Güncellendi..!') );
+            }
+            else
+            {
+                $data = json_encode( array('status' => 'error', 'message' => 'Oyuncu Bilgileri Güncellenemedi..!') );
+            }
+
+        else:
+            $data = json_encode( array('status' => 'error', 'message' => 'Tüm Forumu Doldurunuz..!') );
+        endif;
+
+        $this->output->set_content_type('application/json')->set_output($data);
     }
 	
 	
